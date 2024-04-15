@@ -50,7 +50,7 @@ const MyVolunteers = () => {
                 throw new Error('Failed to accept application');
             }
             console.log('Application accepted successfully');
-            // Refresh the list of applications after accepting
+          
             fetchPostulations();
         } catch (error) {
             console.error('Error accepting application:', error);
@@ -71,8 +71,7 @@ const MyVolunteers = () => {
                 throw new Error('Failed to reject application');
             }
             console.log('Application rejected successfully');
-            // Refresh the list of applications after rejecting
-            fetchPostulations();
+             fetchPostulations();
         } catch (error) {
             console.error('Error rejecting application:', error);
         }
@@ -84,45 +83,45 @@ const MyVolunteers = () => {
 
     return (
         <div>
-            <div className="flex justify-center mt-20">
-                <h1 className="text-black font-bold text-3xl font-serif underline">applications</h1>
+            <div className="flex ml-4 mt-20">
+                <h1 className="text-blue-900 font-bold text-3xl font-mono  ">Applications</h1>
             </div>
-            <div className="flex flex-wrap gap-5 w-[80%] mx-auto mt-10">
-                {postulations.map((postulation, index) => (
-                    <div key={index} className="flex flex-col justify-center relative overflow-hidden py-1">
-                        <div className="max-w-7xl mx-auto">
-                            <div className="relative group">
-                                <div className="absolute -inset-0 bg-gradient-to-r from-black rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                                <div className="relative px-7 py-6 bg-white w-[490px] rounded-lg leading-none flex items-top justify-start space-x-6">
-                                    <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 6.75C6.75 5.64543 7.64543 4.75 8.75 4.75H15.25C16.3546 4.75 17.25 5.64543 17.25 6.75V19.25L12 14.75L6.75 19.25V6.75Z"></path>
-                                    </svg>
-                                    <div className="space-y-4">
-                                        <div className="flex gap-5">
-                                            <p className="text-slate-800"><span className="font-bold">Application id:</span>{postulation.id}</p>
-                                            <p className="text-slate-800"><span className="font-bold">Date: </span>{formatDate(postulation.created_at)}</p>
-                                        </div>
-                                        <div className="flex gap-5">
-                                            {postulation.confirmed_at && (
-                                                <p className="font-bold text-green-500">Accepted</p>
-                                            )}
-                                            {postulation.rejected_at && (
-                                                <p className="font-bold text-red-500">Rejected</p>
-                                            )}
-                                            {!postulation.confirmed_at && !postulation.rejected_at && (
-                                                <div>
-                                                    <button className="font-bold text-gray-500 cursor-pointer" onClick={() => accept(postulation.id)}>Accept </button>
-                                                    <button className="font-bold text-gray-500 cursor-pointer" onClick={() => reject(postulation.id)}>Reject</button>
-                                                </div>
-                                            )}
-                                        </div>
+            <div className="container mx-auto p-6 font-mono">
+    <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+        <div className="w-full overflow-x-auto">
+            <table className="w-full  ">
+                <thead>
+                <tr className="text-md font-semibold tracking-wide text-left text-white bg-blue-900 uppercase border border-white">
+                        <th className="px-4 py-3">Application id</th>
+                        <th className="px-4 py-3">Date</th>
+                        <th className="px-4 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white  ">
+                    {postulations.map((postulation, index) => (
+                        <tr key={index} className="border-b border-gray-200 font-mono font-bold ">
+                            <td className="px-4 py-3">{postulation.id}</td>
+                            <td className="px-4 py-3">{formatDate(postulation.created_at)}</td>
+                            <td className="px-4 py-3    ">
+                                {postulation.confirmed_at ? (
+                                    <span className="font-bold text-green-500">Accepted</span>
+                                ) : postulation.rejected_at ? (
+                                    <span className="font-bold text-red-500">Rejected</span>
+                                ) : (
+                                    <div className='space-x-4 flex items-center justify-content'>
+                                        <button className="text-white bg-green-700     font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2" onClick={() => accept(postulation.id)}>Accept</button>
+                                        <button className="text-white bg-red-700     font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2" onClick={() => reject(postulation.id)}>Reject</button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
         </div>
     );
 };
