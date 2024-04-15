@@ -9,18 +9,14 @@ class Application extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'annonce_id',
+    protected $fillable =  [
+        'volunteer_id',
+        'announcement_id'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    public function announcement(){
+        return $this->belongsTo(Annoucement::class);
     }
-
-    public function annonce()
-    {
-        return $this->belongsTo(Annonce::class);
+    public function volunteer(){
+        return $this->belongsTo(Volunteer::class);
     }
 }

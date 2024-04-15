@@ -2,53 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Annonces;
-use App\Models\Postulation;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class VolunteerController extends Controller
 {
-    public function allAnnonces()
-    {
-        $annonces = Annonces::all();
-        return response()->json($annonces);
-    }
 
-    public function postule(Request $request)
+    /**
+     * Apply for an announcement.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/application/create",
+     *     summary="Apply for an announcement",
+     *     tags={"Volunteer"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="announcement_id",
+     *                 type="integer",
+     *                 example=1
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application done successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Application done successfully, waiting for admin approval"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+
+     
+    public function applyForAnnouncement(Request $request)
     {
         try {
-            $request->validate([
-                'annonce_id' => 'required|exists:annonces,id',
+            Application::create([
+                'volunteer_id' => Auth::user()->volunteer->id,
+                'announcement_id' => $request->announcement_id
             ]);
-
-            $user_id = Auth::guard('api')->user()->id;
-
-            $postulation = Postulation::create([
-                'annonce_id' => $request->annonce_id,
-                'user_id' => $user_id
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Application done succesfully waiting for admin approval '
             ]);
-
-            return response()->json($postulation, 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+        }
+        catch (\Exception $e){
+            return response()->json($e->getMessage());
         }
     }
 
-    public function myPostulate()
-    {
-        $user = Auth::guard('api')->user()->id;
-        $postulation = Postulation::all()->where('user_id',$user);
-        return response()->json($postulation);
-    }
-
-    public function filtrage(Request $request)
-    {
-        $type = $request->input('type');
-
-        $annonces = Annonces::where('type', $type)->get();
-
-        return response()->json($annonces);
-
-    }
 }

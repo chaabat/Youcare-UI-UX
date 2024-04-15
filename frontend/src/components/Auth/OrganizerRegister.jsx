@@ -1,81 +1,102 @@
-import {Link} from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 const OrganizerRegister = () => {
-    const [fname, setFirstName] = useState('');
-    const [lname, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('organizer');
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const submit = async (e) => {
         e.preventDefault();
 
-        await fetch('http://localhost/api/register', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+        await fetch("http://127.0.0.1:8000/api/register/organizer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                fname,
-                lname,
-                role,
+                name,
                 email,
-                password
-            })
+                password,
+            }),
         });
-        navigate('/signin');
-    }
+        navigate("/signin");
+    };
 
     return (
         <div>
-            <section className=" ">
-                <div className="flex justify-center  ">
-                    <div
-                        className="flex mt-24 bg-blue-900 rounded  h-full items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
+            <section
+                style={{
+                    backgroundImage: `url('photos/cover.jpg')`,
+                    backgroundSize: "cover",
+                }}
+            >
+                <div className="flex justify-center ">
+                    <div className="flex mt-4 h-screen items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
                         <div className="w-full">
                             <h1 className="text-2xl  font-semibold tracking-wider text-white capitalize">
-                                REGISTER AS ORGANIZER
+                                Organisateur Form
                             </h1>
                             <div>
                                 <div className=" flex justify-end mt-3 md:flex md:items-center md:-mx-2">
-                                    <Link to="/VolunteerRegister" className="flex justify-center w-full px-6 py-3 mt-4 text-blue-900 border bg-white  rounded-lg md:mt-0 md:w-auto md:mx-2  ">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                        <span className="mx-2">As Volunteer</span>
+                                    <Link
+                                        to="/VolunteerRegister"
+                                        className="flex justify-center w-full px-6 py-3 mt-4 text-white border bg-blue-900  rounded-lg md:mt-0 md:w-auto md:mx-2 hover:bg-white hover:text-black hover:border-black duration-500 focus:outline-none"
+                                    >
+                                        <span className="mx-2">
+                                            Benevole
+                                        </span>
                                     </Link>
                                 </div>
                             </div>
 
-                            <div  className=" w-full">
-                                <form onSubmit={submit} className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 ">
+                            <div className=" w-full">
+                                <form onSubmit={submit}>
                                     <div>
-                                        <label className="block mb-2 text-sm text-gray-100 ">First Name</label>
-                                        <input onChange={(e) => setFirstName(e.target.value)} type="text"   className="block w-full px-5 py-3 mt-2 text-black bg-white "/>
+                                    <label className="block mb-2 text-m text-blue-900 font-mono font-bold">
+                                            First Name
+                                        </label>
+                                        <input
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
+                                            type="text"
+                                            className="block w-full px-5 py-3 mt-2 text-black bg-white "
+                                        />
                                     </div>
 
-                                    <div>
-                                        <label className="block mb-2 text-sm text-gray-100 ">Last Name</label>
-                                        <input onChange={(e) => setLastName(e.target.value)} type="text"   className="block w-full px-5 py-3 mt-2 text-black bg-white "/>
+                                    <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 ">
+                                        <div>
+                                            <label className="block mb-2 text-m text-blue-900 font-mono font-bold">
+                                                Email Address
+                                            </label>
+                                            <input
+                                                onChange={(e) =>
+                                                    setEmail(e.target.value)
+                                                }
+                                                type="email"
+                                                className="block w-full px-5 py-3 mt-2 text-black bg-white "
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block mb-2 text-m text-blue-900 font-mono font-bold">
+                                                Password
+                                            </label>
+                                            <input
+                                                onChange={(e) =>
+                                                    setPassword(e.target.value)
+                                                }
+                                                type="password"
+                                                className="block w-full px-5 py-3 mt-2 text-black bg-white "
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block mb-2 text-sm text-gray-100">Email Address</label>
-                                        <input onChange={(e) => setEmail(e.target.value)} type="text"   className="block w-full px-5 py-3 mt-2 text-black bg-white "/>
-                                    </div>
-
-                                    <div>
-                                        <label className="block mb-2 text-sm text-gray-100">Password</label>
-                                        <input onChange={(e) => setPassword(e.target.value)} type="password"  className="block w-full px-5 py-3 mt-2 text-black bg-white "/>
-                                    </div>
-
-                                    <input type="hidden" name="role" value={role}
-                                           onChange={(e) => setRole(e.target.value)}/>
-
-                                    <button type="submit"
-                                            className="flex items-center justify-between w-full px-6 h-12 mt-7 text-sm tracking-wide text-blue-900   bg-white rounded-lg     ">
-                                        <span>Register </span>
-                                         
+                                    <button
+                                        type="submit"
+                                        className="flex items-center justify-center w-full px-6 h-12 mt-7 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-900 rounded-lg  focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                                    >
+                                        Sign Up
                                     </button>
                                 </form>
                             </div>

@@ -5,22 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Postulation extends Model
+class Volunteer extends Model
 {
     use HasFactory;
-
-
     protected $fillable = [
-      'annonce_id',
-      'user_id',
-      'accepted_at',
+        'user_id',
+        'skills'
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function annonce()
+
+    public function applications()
     {
-        return $this->belongsTo(Annonces::class, 'annonce_id');
+        return $this->hasMany(Application::class);
     }
 }

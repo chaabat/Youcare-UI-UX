@@ -1,231 +1,199 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "YouCare",
-        "description": "YouCare API is a platform designed to facilitate volunteerism by connecting organizers of events with individuals willing to contribute their time and skills. Through this API, organizers can create announcements for various initiatives, specifying details such as event type, description, date, location, and required skills. Volunteers can browse these announcements, filtering them based on event type or location, and apply to participate in projects aligning with their interests and availability. The API also supports authentication mechanisms, allowing secure access to routes requiring authentication. Additionally, organizers have the ability to rate volunteers after each event, providing feedback to the community. Administrators can manage organizers, announcements, and volunteers, as well as view statistics related to events, organizers, and volunteers. With comprehensive documentation provided through Swagger, utilizing the YouCare API is made straightforward and accessible.",
-        "contact": {
-            "email": "test@test.com"
-        },
-        "license": {
-            "name": "API License",
-            "url": "http://www.example.com/license"
-        },
-        "version": "1.0.0"
+        "title": "My First API",
+        "version": "0.1"
     },
     "paths": {
-        "/api/index": {
-            "get": {
-                "tags": [
-                    "Annonces"
-                ],
-                "summary": "Get a list of annonces",
-                "operationId": "e90f65f4f0af7ca81c389b332df9b3e4",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "400": {
-                        "description": "Invalid request"
-                    }
-                }
-            }
-        },
-        "/api/annonce/{id}": {
-            "get": {
-                "tags": [
-                    "Annonces"
-                ],
-                "summary": "Get a specific annonce",
-                "operationId": "8a5fe0783ca610710eea7ab1c1b83a08",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "404": {
-                        "description": "Annonce not found"
-                    }
-                }
-            }
-        },
-        "/api/create": {
+        "/api/users/ban/{user}": {
             "post": {
                 "tags": [
-                    "Annonces"
+                    "Admin"
                 ],
-                "summary": "Create a new annonce",
-                "operationId": "30ab0b80555584f595223d7778cbe8c6",
+                "summary": "Ban a user",
+                "description": "Ban a user.",
+                "operationId": "0fe02fc3d6a8a69a39bbfe88eaf496a7",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID of the user to ban",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Annonce added successfully"
+                        "description": "User banned successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User banned successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "400": {
-                        "description": "Error occurred"
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
         },
-        "/api/update/{id}": {
-            "put": {
-                "tags": [
-                    "Annonces"
-                ],
-                "summary": "Update an existing annonce",
-                "operationId": "6505f1b2632327d21f8f1990a5dcc0d7",
-                "responses": {
-                    "200": {
-                        "description": "Annonce updated successfully"
-                    },
-                    "404": {
-                        "description": "Annonce not found"
-                    }
-                }
-            }
-        },
-        "/api/delete/{id}": {
-            "delete": {
-                "tags": [
-                    "Annonces"
-                ],
-                "summary": "Delete an existing annonce",
-                "operationId": "3c1911420595f7511a092cc1a8739b14",
-                "responses": {
-                    "200": {
-                        "description": "Annonce deleted successfully"
-                    },
-                    "404": {
-                        "description": "Annonce not found"
-                    }
-                }
-            }
-        },
-        "/api/filter": {
+        "/api/announcement/create": {
             "post": {
                 "tags": [
-                    "Annonces"
+                    "Announcement"
                 ],
-                "summary": "Filter annonces based on criteria",
-                "operationId": "907c21dc5fe59935682c523b9708768b",
+                "summary": "Create a new announcement",
+                "description": "Create a new announcement.",
+                "operationId": "36b5cd0f70fa61d1b76caf65e4905a86",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "New Announcement"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is a new announcement"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-04-01"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "New York"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Public"
+                                    },
+                                    "required_skills": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "Skill 1",
+                                            "Skill 2"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Successful operation"
+                        "description": "Announcement created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Announcement Created Successfully !"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "session": {
+                                            "type": "string",
+                                            "example": "admin"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Invalid data provided"
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
         },
-        "/api/mes-application": {
-            "get": {
+        "/api/announcement/update/{announcement}": {
+            "put": {
                 "tags": [
-                    "Applications"
+                    "Announcement"
                 ],
-                "summary": "Get applications submitted by the authenticated user",
-                "operationId": "11ef8b7bd09d239af7cff12e2ca59d1c",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    }
-                },
-                "security": [
+                "summary": "Update an existing announcement",
+                "description": "Update an existing announcement.",
+                "operationId": "a074ad6e13a3359f28343ee861621f45",
+                "parameters": [
                     {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/application": {
-            "post": {
-                "tags": [
-                    "Applications"
-                ],
-                "summary": "Submit a new application",
-                "operationId": "6947bb0f456b5fd06e02076fb7a529e4",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "annonce_id"
-                                ],
-                                "properties": {
-                                    "annonce_id": {
-                                        "type": "integer",
-                                        "example": "1"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                        "name": "announcement",
+                        "in": "path",
+                        "description": "ID of the announcement to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Application submitted successfully"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/applications": {
-            "get": {
-                "tags": [
-                    "Applications"
                 ],
-                "summary": "Get applications associated with announcements of the authenticated user",
-                "operationId": "2f03886edf85feed716bc2df942958ed",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/statut/{id}": {
-            "patch": {
-                "tags": [
-                    "Applications"
-                ],
-                "summary": "Update status of a specific application",
-                "operationId": "833619a0a07cccda78ac6debd6f4e0fd",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "status"
-                                ],
                                 "properties": {
-                                    "status": {
+                                    "title": {
                                         "type": "string",
-                                        "enum": [
-                                            "accepted",
-                                            "rejected"
-                                        ],
-                                        "example": "accepted"
+                                        "example": "Updated Announcement"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is the updated announcement"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-04-01"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Updated Location"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Updated Type"
+                                    },
+                                    "required_skills": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "Updated Skill 1",
+                                            "Updated Skill 2"
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -235,121 +203,282 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Application status updated successfully"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
+                        "description": "Announcement updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Announcement data updated successfully"
+                                        },
+                                        "updated_announcement": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Application not found"
+                        "description": "Announcement not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/announcement/delete/{announcement}": {
+            "delete": {
+                "tags": [
+                    "Announcement"
+                ],
+                "summary": "Delete an existing announcement",
+                "description": "Delete an existing announcement.",
+                "operationId": "94f5438c8195b1e7535ad7398f01962b",
+                "parameters": [
+                    {
+                        "name": "announcement",
+                        "in": "path",
+                        "description": "ID of the announcement to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Announcement deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Announcement 'Title' deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Announcement not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/announcements/all": {
+            "get": {
+                "tags": [
+                    "Announcement"
+                ],
+                "summary": "Retrieve all announcements",
+                "description": "Retrieve all announcements.",
+                "operationId": "7c3790258e759d8c432b8381841f0d5e",
+                "responses": {
+                    "200": {
+                        "description": "List of all announcements",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "announcements": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/announcements/filter": {
+            "post": {
+                "tags": [
+                    "Announcement"
+                ],
+                "summary": "Filter announcements by keyword",
+                "description": "Filter announcements by keyword.",
+                "operationId": "5fe09ff1a0c9c296ab5a543418405330",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "keyword": {
+                                        "type": "string",
+                                        "example": "Event"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
                     }
                 },
-                "security": [
-                    {
-                        "bearerAuth": []
+                "responses": {
+                    "200": {
+                        "description": "List of filtered announcements",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "announcements": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
-                ]
+                }
+            }
+        },
+        "api/register/organizer": {
+            "post": {
+                "summary": "Register a new organizer",
+                "operationId": "95e22516c3555dc2a4aa599cd06678d1",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "organizer's name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "organizer's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "organizer's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "organizer registered successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
+            }
+        },
+        "api/register/volunteer": {
+            "post": {
+                "summary": "Register a new volanteer",
+                "operationId": "82511ef8aa9ad1396b95f2b533a3fc44",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "volanteer's name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "volanteer's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "volanteer's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "volanteer registered successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
             }
         },
         "/api/login": {
             "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Login user",
-                "operationId": "44212a9096e4b09358281e9ec8a0701d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "summary": "Authenticate user and generate JWT token",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "User's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation"
+                        "description": "Login successful"
                     },
                     "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/register": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Register a new user",
-                "operationId": "a718f172ff3ac464d723835815f8fb57",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password",
-                                    "role"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "role": {
-                                        "type": "string",
-                                        "enum": [
-                                            "admin",
-                                            "user"
-                                        ],
-                                        "example": "user"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "User created successfully"
-                    },
-                    "422": {
-                        "description": "Validation error"
+                        "description": "Invalid credentials"
                     }
                 }
             }
@@ -359,11 +488,29 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Logout user",
-                "operationId": "79854151e609bd20032aa5aa4d5a35c0",
+                "summary": "Log out the authenticated user",
+                "description": "Log out the authenticated user.",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
                 "responses": {
                     "200": {
-                        "description": "Successfully logged out"
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -376,35 +523,187 @@
                 ]
             }
         },
-        "/api/refresh": {
-            "post": {
+        "/api/application/accept/{application}": {
+            "get": {
                 "tags": [
-                    "Authentication"
+                    "Organizer"
                 ],
-                "summary": "Refresh user token",
-                "operationId": "7d5da2870d3eba95cdd67878ab20da3a",
+                "summary": "Accept an application",
+                "description": "Accept an application.",
+                "operationId": "1ea4cb387ee9d0a5134d8a88ff513466",
+                "parameters": [
+                    {
+                        "name": "application",
+                        "in": "path",
+                        "description": "ID of the application to accept",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Token refreshed successfully"
+                        "description": "Application accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Application accepted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "401": {
-                        "description": "Unauthenticated"
+                    "404": {
+                        "description": "Application not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/application/reject/{application}": {
+            "get": {
+                "tags": [
+                    "Organizer"
+                ],
+                "summary": "Reject an application",
+                "description": "Reject an application.",
+                "operationId": "0cadec3d6ab7757274d94b7cbf8cd86c",
+                "parameters": [
+                    {
+                        "name": "application",
+                        "in": "path",
+                        "description": "ID of the application to reject",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Application rejected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Application rejected successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Application not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/applications/requests/all": {
+            "get": {
+                "tags": [
+                    "Organizer"
+                ],
+                "summary": "Retrieve all pending applications",
+                "description": "Retrieve all pending applications.",
+                "operationId": "925d92a90d8bf66e1d0716a0d9b807e9",
+                "responses": {
+                    "200": {
+                        "description": "List of all pending applications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "pending_applications": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/application/create": {
+            "post": {
+                "tags": [
+                    "Volunteer"
+                ],
+                "summary": "Apply for an announcement",
+                "description": "Apply for an announcement.",
+                "operationId": "6573aa85cf203124c6e1de9b1b71b58b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "announcement_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
                     }
                 },
-                "security": [
-                    {
-                        "bearerAuth": []
+                "responses": {
+                    "200": {
+                        "description": "Application done successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Application done successfully, waiting for admin approval"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
-                ]
-            }
-        }
-    },
-    "components": {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+                }
             }
         }
     }

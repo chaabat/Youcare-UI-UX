@@ -2,99 +2,208 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Annonces;
-use App\Models\Postulation;
+use App\Models\Admin;
+use App\Models\Annoucement;
+use App\Models\Application;
+use App\Models\User;
+use App\Models\Volunteer;
 use Illuminate\Http\Request;
-use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class OrganizerController extends Controller
 {
-    public function store(Request $request)
-    {
-        $user_id = \Illuminate\Support\Facades\Auth::guard('api')->user()->id;
-        $annonces = new Annonces;
-        $annonces->titre = $request->titre;
-        $annonces->description = $request->description;
-        $annonces->type = $request->type;
-        $annonces->competance = $request->competance;
-        $annonces->date = $request->date;
-        $annonces->location = $request->location;
+     /**
+     * Accept an application.
+     *
+     * @param \App\Models\Application $application
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Get(
+     *     path="/api/application/accept/{application}",
+     *     summary="Accept an application",
+     *     tags={"Organizer"},
+     *     @OA\Parameter(
+     *         name="application",
+     *         in="path",
+     *         description="ID of the application to accept",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application accepted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Application accepted successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Application not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function acceptApplication (Application $application){
+        try {
+            $organizer_id = Auth::user()->organizer->id;
+            $organizer_announcements = Annoucement::where('organizer_id',$organizer_id)->pluck('id')->toArray();
+            if(in_array($application->announcement_id , $organizer_announcements)){
+                $application->confirmed_at = now();
+                $application->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'application ' . $application->id . ' accepted successfully'
+                ]);
+            }
+           else{
+               return response()->json([
+                   'status' => 'failed',
+                   'message' => 'You cannot Make operations on applications that doesnt belong to your events '
+               ]);
+           }
+        }
+        catch (\Exception $e){
+            return response()->json($e->getMessage());
+        }
+    }
+     /**
+     * Reject an application.
+     *
+     * @param \App\Models\Application $application
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Get(
+     *     path="/api/application/reject/{application}",
+     *     summary="Reject an application",
+     *     tags={"Organizer"},
+     *     @OA\Parameter(
+     *         name="application",
+     *         in="path",
+     *         description="ID of the application to reject",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application rejected successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Application rejected successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Application not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function rejectApplication (Application $application){
+        try {
+            $organizer_id = Auth::user()->organizer->id;
+            $organizer_announcements = Annoucement::where('organizer_id',$organizer_id)->pluck('id')->toArray();
+           if (in_array($application->announcement_id , $organizer_announcements)){
+               $application->rejected_at = now();
+               $application->save();
+               return response()->json([
+                   'status' => 'success',
+                   'message' => 'application ' . $application->id . ' rejected successfully'
+               ]);
+           }
+           else{
+               return response()->json([
+                   'status' => 'failed',
+                   'message' => 'You cannot Make operations on applications that doesnt belong to your event '
+               ]);
+           }
+        }
+        catch (\Exception $e){
+            return response()->json($e->getMessage());
+        }
+    }
 
-        $annonces->user_id = $user_id;
-        $annonces->save();
+
+    /**
+     * Retrieve all pending applications.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Get(
+     *     path="/api/applications/requests/all",
+     *     summary="Retrieve all pending applications",
+     *     tags={"Organizer"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of all pending applications",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="pending_applications",
+     *                 type="string"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function allRequests()
+    {
+        $organizer_id = Auth::user()->organizer->id;
+        $organizer_announcements = Annoucement::where('organizer_id',$organizer_id)->pluck('id')->toArray();
+        $applications = Application::whereIn('announcement_id',$organizer_announcements)
+            ->whereNull('confirmed_at')
+            ->whereNull('rejected_at')
+            ->get();
 
         return response()->json([
-            "status" => "success",
-           "message" => "annonce created successfully",
-            "announcement" => $annonces
-        ],201);
+           'status' => 'success',
+           'pending_applications' =>$applications
+        ]);
     }
-
-
-
-    public function annonces(Request $request)
+    public function allapps()
     {
-        $user_id = \Illuminate\Support\Facades\Auth::guard('api')->user()->id;
-        $annonces = Annonces::where('user_id',$user_id)->get();
-        return response()->json($annonces);
-    }
+      $applications = Application::all();
 
-
-
-    public function destroy($id)
-    {
-        $user_id = \Illuminate\Support\Facades\Auth::guard('api')->user()->id;
-        $annonce = Annonces::find($id);
-
-        if($annonce && $annonce->user_id === $user_id){
-            $annonce->delete();
-            return response()->json([
-                "message" => "annonce deleted successfully",
-            ], 201);
-    }else{
-            return response()->json([
-               "message" => "annonce not found or unauthorized",
-            ]);
-        }
-    }
-
-    public function demande()
-    {
-        $user_id = \Illuminate\Support\Facades\Auth::guard('api')->user()->id;
-        $demande = Postulation::whereHas('annonce', function ($query) use ($user_id) {
-            $query->where('user_id', $user_id);
-        })->get();
-        if(empty($demande)){
-            return response()->json([
-                "message" => "demande not found",
-            ], 404);
-        }else{
-            return response()->json($demande);
-        }
-    }
-
-    public function accepteDemande($id)
-    {
-        $user_id = \Illuminate\Support\Facades\Auth::guard('api')->user()->id;
-        $postulation = Postulation::find($id);
-
-        if($postulation && $postulation->annonce->user_id === $user_id) {
-            if ($postulation->accepted_at === null) {
-                $postulation->update(['accepted_at' => NOW()]);
-                return response()->json([
-                    "message" => "demande accepted successfully",
-                ], 201);
-            } else {
-                return response()->json([
-                    "message" => "demande has already been accepted",
-                ], 400);
-            }
-        }else
-            {
-                return response()->json([
-                    "message" => "Unauthorized",
-                ], 401);
-            }
+        return response()->json([
+           'status' => 'success',
+           'pending_applications' =>$applications
+        ]);
     }
 
 }

@@ -10,25 +10,30 @@ const MyVolunteers = () => {
     const fetchPostulations = async () => {
         try {
             const token = localStorage.getItem('token');
-            if(!token){
+            if (!token) {
                 console.error('JWT TOKEN NOT FOUND');
                 return;
             }
-            const response = await fetch('http://localhost/api/myPostulate', {
-               method: 'GET',
-               headers: {
-                   'Content-type': 'application/json',
-                   Authorization: `Bearer ${token}`
-               }
+            
+            const response = await fetch('http://127.0.0.1:8000/api/applications/all', {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
             });
-            if(response.ok){
+            if (response.ok) {
                 const data = await response.json();
-                setPostulations(data);
-            }else{
-                console.error('Failed to fetch Postulation:', response.statusText)
+                if (Array.isArray(data.pending_applications)) { 
+                    setPostulations(data.pending_applications); 
+                } else {
+                    console.error('Data received from API is not an array:', data);
+                }
+            } else {
+                console.error('Failed to fetch postulations:', response.statusText);
             }
-        }catch(error) {
-            console.error('Error fetching the Postulations', error);
+        } catch (error) {
+            console.error('Error fetching postulations:', error);
         }
     };
     const formatDate = (dateString) => {
@@ -58,18 +63,18 @@ const MyVolunteers = () => {
                                 <div className="space-y-4">
                                     <div className="flex gap-5">
                                         <p className="text-slate-800"><span
-                                            className="font-bold">Announcement: </span>{postulation.annonce.titre}
+                                            className="font-bold">Application id:</span>{postulation.id   }
                                         </p>
                                         <p className="text-slate-800"><span
-                                            className="font-bold">Date: </span>{formatDate(postulation.annonce.date)}
+                                            className="font-bold">Date: </span>{formatDate(postulation.created_at)}
                                         </p>
                                     </div>
                                     <div className="flex gap-5">
-                                        <p className="text-slate-800"><span
-                                            className="font-bold">Location: </span>{postulation.annonce.location}</p>
-                                        <p className="text-slate-800"><span
-                                            className="font-bold">Accepted: </span>{postulation.accepted_at ? formatDate(postulation.accepted_at) : 'Not Yet !'}</p>
-                                    </div>
+                                            <p className="text-slate-800">
+                                                <span className="font-bold">Status: </span>
+                                                {postulation.rejected_at ? 'Rejected' : postulation.confirmed_at ? 'Accepted' : 'Waiting for approval'}
+                                            </p>
+                                        </div>
                                 </div>
                             </div>
                         </div>
